@@ -1,0 +1,36 @@
+/* 
+    app specific styles
+*/
+
+/* general */
+
+/* fonts */
+
+/* @font-face {
+    font-family: "Primary";
+    src: url("@/assets/fonts/lato/Lato-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Secondary";
+    src: url("@/assets/fonts/zilla/ZillaSlab-SemiBold.ttf");
+} */
+
+.font-primary {
+    font-family: "Primary", sans-serif;
+}
+
+.font-secondary {
+    font-family: "Secondary", sans-serif;
+}
+
+/* fonts */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-weight: 200;
+    font-family: "Primary", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
