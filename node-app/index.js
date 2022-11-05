@@ -1,7 +1,7 @@
 import http from "http";
 
 const port = process.env.PORT || 8080;
-const secretParam = process.env.SECRET_PARAM || "default";
+const secretParam = process.env.SECRET_PARAM || "default X";
 
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
