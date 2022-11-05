@@ -1,2 +1,12 @@
+# Node
 node_modules
 dist
+# Maven
+log/
+target/
+# Intellij
+.idea/
+*.iml
+.classpath
+.project
+.settings
