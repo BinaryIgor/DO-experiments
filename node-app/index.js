@@ -1,11 +1,12 @@
 import http from "http";
 
-const port = process.PORT | 8080;
+const port = process.env.PORT || 8080;
+const secretParam = process.env.SECRET_PARAM || "default";
 
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', "text/plain");
-    res.end(`Just some node server: ${new Date()}`);
+    res.end(`Just some node server, asked at: ${new Date()}, with env: ${secretParam}`);
 });
 
 server.listen(port, () => console.log("Server has started!"));
