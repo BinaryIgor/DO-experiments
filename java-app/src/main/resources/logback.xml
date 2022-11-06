@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <appender name="HTTP" class="com.igor101.dojavaexperiments.logging.HttpLogAppender">
+        <endpoint>http://monitoring.com</endpoint>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="HTTP" />
+    </root>
+    <!--    <logger name="org.springframework.web" level="DEBUG"/>-->
+</configuration>
