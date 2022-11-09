@@ -4,7 +4,7 @@ services:
       container_name: elastic-exp
       image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.7"
       environment:
-        - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+        - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
         - "discovery.type=single-node"
         # disable security localy!
         - "xpack.security.enabled=false"
