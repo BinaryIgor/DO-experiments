@@ -3,7 +3,9 @@ package com.igor101.dojavamonitor.logs;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import com.igor101.dojavamonitor.logs.model.LogData;
+import com.igor101.dojavamonitor.logs.model.LogLevel;
 import com.igor101.dojavamonitor.logs.model.LogRecord;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,16 +17,23 @@ public class LogsService {
 
     private final LogsConverter logsConverter;
     private final ElasticsearchClient elasticsearchClient;
+    private final MeterRegistry meterRegistry;
 
     public LogsService(LogsConverter logsConverter,
-                       ElasticsearchClient elasticsearchClient) {
+                       ElasticsearchClient elasticsearchClient,
+                       MeterRegistry meterRegistry) {
         this.logsConverter = logsConverter;
         this.elasticsearchClient = elasticsearchClient;
+        this.meterRegistry = meterRegistry;
     }
 
     public void handle(List<LogData> logs) {
         var records = logs.stream()
-                .map(logsConverter::converted)
+                .map(l -> {
+                    var r = logsConverter.converted(l);
+                    countApplicationLogs(r.application(), r.level());
+                    return r;
+                })
                 .toList();
         //TODO send to elastic!
         try {
@@ -49,6 +58,16 @@ public class LogsService {
         if (result.errors()) {
             LOG.error("Errors during sending to elastic...");
             result.items().forEach(i -> System.out.println(i.error()));
+        }
+    }
+
+    private void countApplicationLogs(String application, LogLevel logLevel) {
+        if (logLevel == LogLevel.ERROR) {
+            meterRegistry.counter("application_log_errors_total", "application", application)
+                    .increment();
+        } else if (logLevel == LogLevel.WARNING) {
+            meterRegistry.counter("application_log_warnings_total", "application", application)
+                    .increment();
         }
     }
 }

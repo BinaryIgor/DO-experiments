@@ -16,8 +16,6 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<elasticsearch.client.version>7.17.7</elasticsearch.client.version>
-		<jakarata.json.api.version>2.0.1</jakarata.json.api.version>
 	</properties>
 
 	<dependencies>
@@ -33,16 +31,6 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>co.elastic.clients</groupId>
-			<artifactId>elasticsearch-java</artifactId>
-			<version>${elasticsearch.client.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.json</groupId>
-			<artifactId>jakarta.json-api</artifactId>
-			<version>${jakarata.json.api.version}</version>
 		</dependency>
 
 
