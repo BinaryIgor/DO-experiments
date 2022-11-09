@@ -4,11 +4,9 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.igor101.dojavamonitor.logs.model.LogData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class LogsService {
 
     private final Logger LOG = LoggerFactory.getLogger(LogsController.class);
@@ -23,6 +21,10 @@ public class LogsService {
     }
 
     public void handle(List<LogData> logs) {
-
+        var records = logs.stream()
+                .map(logsConverter::converted)
+                .toList();
+        //TODO send to elastic!
+        LOG.info("Log records...{}", records);
     }
 }
