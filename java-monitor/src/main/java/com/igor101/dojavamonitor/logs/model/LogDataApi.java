@@ -1,4 +1,4 @@
-package com.igor101.dojavamonitor.logs;
+package com.igor101.dojavamonitor.logs.model;
 
 public record LogDataApi(String container_name,
                          String container_id,

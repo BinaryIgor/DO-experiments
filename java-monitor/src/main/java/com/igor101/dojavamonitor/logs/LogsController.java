@@ -1,6 +1,7 @@
 package com.igor101.dojavamonitor.logs;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.igor101.dojavamonitor.logs.model.LogData;
+import com.igor101.dojavamonitor.logs.model.LogsDataApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,15 +15,20 @@ public class LogsController {
 
     private final Logger LOG = LoggerFactory.getLogger(LogsController.class);
 
-    private final ElasticsearchClient elasticsearchClient;
+    private final LogsService service;
 
-    public LogsController(ElasticsearchClient elasticsearchClient) {
-        this.elasticsearchClient = elasticsearchClient;
+    public LogsController(LogsService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public void append(@RequestBody LogsDataApi logs) {
-        LOG.info("Getting logs!");
-        System.out.println(logs);
+    public void append(@RequestBody LogsDataApi apiLogs) {
+        LOG.info("Getting logs {}!", apiLogs.logs().size());
+
+        var logs = apiLogs.logs().stream()
+                .map(l -> new LogData(l.container_name(), l.from(), l.to(), l.log()))
+                .toList();
+
+        service.handle(logs);
     }
 }

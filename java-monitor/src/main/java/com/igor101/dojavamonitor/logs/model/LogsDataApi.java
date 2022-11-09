@@ -1,4 +1,4 @@
-package com.igor101.dojavamonitor.logs;
+package com.igor101.dojavamonitor.logs.model;
 
 import java.util.List;
 
