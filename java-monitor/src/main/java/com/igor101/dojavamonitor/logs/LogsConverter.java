@@ -18,6 +18,7 @@ public class LogsConverter {
     }
 
 
+    //TODO
     public LogRecord converted(LogData log, Instant receivedTimestamp) {
         return new LogRecord(log.application(), logLevel(log), log.log(),
                 receivedTimestamp,
