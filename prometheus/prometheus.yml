@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 30s
+  scrape_timeout: 5s
+  evaluation_interval: 30s
+
+rule_files:
+  - "alert_rules.yml"
+  # - "second.rules"
+
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+  - job_name: apps
+    static_configs:
+        - targets: ['localhost:1234']
+          labels: 
+           service: 'java-app'
