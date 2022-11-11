@@ -5,6 +5,7 @@ import java.time.Instant;
 public record LogRecord(String application,
                         LogLevel level,
                         String log,
-                        Instant from,
-                        Instant to) {
+                        Instant receivedTimestamp,
+                        Instant fromTimestamp,
+                        Instant toTimestamp) {
 }

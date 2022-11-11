@@ -1,8 +1,8 @@
 package com.igor101.dojavamonitor.logs.model;
 
-public record LogDataApi(String container_name,
-                         String container_id,
-                         long from,
-                         long to,
+public record LogDataApi(String containerName,
+                         String containerId,
+                         long fromTimestamp,
+                         long toTimestamp,
                          String log) {
 }

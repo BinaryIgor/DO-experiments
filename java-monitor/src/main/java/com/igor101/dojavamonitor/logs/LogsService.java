@@ -9,6 +9,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.List;
 
 public class LogsService {
@@ -27,15 +28,14 @@ public class LogsService {
         this.meterRegistry = meterRegistry;
     }
 
-    public void handle(List<LogData> logs) {
+    public void handle(List<LogData> logs, Instant receivedTimestamp) {
         var records = logs.stream()
                 .map(l -> {
-                    var r = logsConverter.converted(l);
+                    var r = logsConverter.converted(l, receivedTimestamp);
                     countApplicationLogs(r.application(), r.level());
                     return r;
                 })
                 .toList();
-        //TODO send to elastic!
         try {
             LOG.info("About to send {} log records...", records.size());
             sendLogs(records);

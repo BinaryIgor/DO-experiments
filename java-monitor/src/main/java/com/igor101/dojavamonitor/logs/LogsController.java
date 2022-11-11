@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+
 @RestController
 @RequestMapping("logs")
 public class LogsController {
@@ -26,9 +28,9 @@ public class LogsController {
         LOG.info("Getting logs {}!", apiLogs.logs().size());
 
         var logs = apiLogs.logs().stream()
-                .map(l -> new LogData(l.container_name(), l.from(), l.to(), l.log()))
+                .map(l -> new LogData(l.containerName(), l.fromTimestamp(), l.toTimestamp(), l.log()))
                 .toList();
 
-        service.handle(logs);
+        service.handle(logs, Instant.now());
     }
 }
