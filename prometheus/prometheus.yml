@@ -20,6 +20,11 @@ scrape_configs:
       - targets: ['localhost:9090']
         labels:
           service: 'prometheus'
+  - job_name: node
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          service: 'node'
   - job_name: apps
     static_configs:
         - targets: ['localhost:1234']
