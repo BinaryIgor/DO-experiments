@@ -31,6 +31,9 @@ public class RequestFilter implements Filter {
                 httpResponse.setStatus(404);
                 httpResponse.getWriter().write("Not Found");
             }
+
+            log.error("Some error");
+            log.warn("Some warning");
         }
 
         if (filterFurther) {

@@ -7,6 +7,14 @@ log-mappings:
     warningKeywords: [ "WARNING", "WARN" ]
     errorKeywords: [ "ERROR" ]
 
+logs-storage:
+  file:
+    enabled: true
+    path: "/tmp/logs"
+  elasticsearch:
+    enabled: true
+    path: "http://localhost:9200"
+
 management:
   endpoints:
     web:

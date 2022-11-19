@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 30s
+      scrape_timeout: 5s
+      evaluation_interval: 30s
+
+    rule_files:
+      - "alert_rules.yml"
+
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+                - localhost:9093
+
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets: ['localhost:9090']
+            labels:
+              service: 'prometheus'
+      - job_name: node
+        static_configs:
+          - targets: ['localhost:9100']
+            labels:
+              service: 'node'
+      - job_name: apps
+        static_configs:
+            - targets: ['localhost:1234']
+              labels: 
+                service: 'java-app'
+  alert_rules.yml: |-
+    groups:
+    - name: system-alerts
+      rules:
+      - alert: HighMachineCpuUsage
+        expr: '(100 - (avg by (job, instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80'
+        labels:
+          severity: critical
+        annotations:
+          summary: "Machine {{ $labels.job }} high CPU usage"
+          description: "Machine {{ $labels.job }} of {{ $labels.instance }} is using more then 80% of CPU for 5 minutes"
+      - alert: ApplicationLogsErrors
+        expr: 'sum by (monitored_application, source, instance_id) (increase(application_logs_errors_total[5m])) > 0'
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application {{ $labels.monitored_application }} has errors in logs"
+          description: "Application {{ $labels.monitored_application }} from {{ $labels.source }} source of {{ $labels.instance_id }} instance_id has errors in its logs."
+      - alert: ApplicationDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Application {{ $labels.application }} is down'
+          description: 'Application {{ $labels.instance }} is unavailable. Go here: {{ $labels.application }}'
+      - alert: AlwaysFiring
+        expr: vector(1)
+        annotations:
+          summary: 'Always up'
+          description: "Something went truly wrong"
+      - alert: BusinessProcessFailure
+        expr: random_business_metric == 0
+        for: 5m
+        labels:
+          application: "Critical business thing"
+          severity: critical
+        annotations:
+          description: Process {{ $labels.application }} has failed!
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus
+          ports:
+            - containerPort:  9090
+          volumeMounts:
+            - mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
+              name: prom-config
+            - mountPath: /etc/prometheus/alert_rules.yml
+              subPath: alert_rules.yml
+              name: prom-config
+      volumes:
+        - name: prom-config
+          configMap:
+            name: prometheus-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+  type: ClusterIP

@@ -18,11 +18,9 @@ public class LogsConverter {
     }
 
 
-    //TODO
     public LogRecord converted(LogData log, Instant receivedTimestamp) {
-        return new LogRecord(log.application(), logLevel(log), log.log(),
-                receivedTimestamp,
-                Instant.ofEpochSecond(log.from()), Instant.ofEpochSecond(log.to()));
+        return new LogRecord(log.source(), log.application(), logLevel(log), log.log(),
+                receivedTimestamp, Instant.ofEpochSecond(log.from()), Instant.ofEpochSecond(log.to()));
     }
 
     private LogLevel logLevel(LogData log) {

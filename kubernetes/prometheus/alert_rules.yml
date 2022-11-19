@@ -1,0 +1,38 @@
+groups:
+  - name: system-alerts
+    rules:
+    - alert: HighMachineCpuUsage
+      expr: '(100 - (avg by (job, instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80'
+      labels:
+        severity: critical
+      annotations:
+        summary: "Machine {{ $labels.job }} high CPU usage"
+        description: "Machine {{ $labels.job }} of {{ $labels.instance }} is using more then 80% of CPU for 5 minutes"
+    - alert: ApplicationLogsErrors
+      expr: 'sum by (monitored_application, source, instance_id) (increase(application_logs_errors_total[5m])) > 0'
+      labels:
+        severity: critical
+      annotations:
+        summary: "Application {{ $labels.monitored_application }} has errors in logs"
+        description: "Application {{ $labels.monitored_application }} from {{ $labels.source }} source of {{ $labels.instance_id }} instance_id has errors in its logs."
+    - alert: ApplicationDown
+      expr: up == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: 'Application {{ $labels.application }} is down'
+        description: 'Application {{ $labels.instance }} is unavailable. Go here: {{ $labels.application }}'
+    - alert: AlwaysFiring
+      expr: vector(1)
+      annotations:
+        summary: 'Always up'
+        description: "Something went truly wrong"
+    - alert: BusinessProcessFailure
+      expr: random_business_metric == 0
+      for: 5m
+      labels:
+        application: "Critical business thing"
+        severity: critical
+      annotations:
+        description: Process {{ $labels.application }} has failed!
